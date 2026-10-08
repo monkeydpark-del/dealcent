@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFD21F">
+<title>딜센트 관리</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🏷️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --ink: #17171B;
+    --paper: #FFFFFF;
+    --wash: #F5F5F2;
+    --line: #E4E4DE;
+    --muted: #666670;
+    --sticker: #FFD21F;
+    --sale: #D92B1F;
+    --ok: #12804A;
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--paper); line-height: 1.5; -webkit-text-size-adjust: 100%; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+  .brand { display: inline-block; background: var(--sticker); font-weight: 900; font-size: 18px; letter-spacing: -0.03em; padding: 3px 10px 4px; border-radius: 7px; transform: rotate(-3deg); }
+  h1 { margin: 18px 0 14px; font-size: 26px; font-weight: 900; letter-spacing: -0.04em; }
+  h2 { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.03em; }
+
+  .bar { border-bottom: 1px solid var(--line); background: var(--paper); }
+  .bar .wrap { display: flex; align-items: center; gap: 14px; padding-top: 12px; padding-bottom: 12px; }
+  .spacer { flex: 1; }
+  .bar a, .linkbtn { font: inherit; font-size: 14px; font-weight: 700; color: var(--ink); background: none; border: 0; padding: 6px 0; cursor: pointer; text-decoration: underline; }
+
+  .field { display: block; margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
+  .field > span, .field > legend { display: block; margin: 0 0 6px; padding: 0; font-size: 14px; font-weight: 800; }
+  input[type=text], input[type=url], input[type=password], input[type=datetime-local], select {
+    width: 100%; min-height: 48px; font: inherit; font-size: 16px; color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--ink); border-radius: 10px; padding: 10px 12px;
+  }
+  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 20px) 21px, calc(100% - 14px) 21px; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hint { margin: -6px 0 14px; font-size: 13px; color: var(--muted); min-height: 1.4em; }
+  .hint b { color: var(--sale); }
+
+  .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .seg label { position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; }
+  .seg span { display: grid; place-items: center; min-height: 48px; border: 1.5px solid var(--ink); border-radius: 10px; font-weight: 800; font-size: 15px; background: var(--paper); cursor: pointer; }
+  .seg input:checked + span { background: var(--ink); color: #fff; }
+  .seg input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+  .photoRow { display: flex; align-items: center; gap: 12px; }
+  .photoBox { width: 96px; height: 96px; flex: none; border-radius: 10px; background: var(--wash); border: 1.5px dashed var(--muted); display: grid; place-items: center; overflow: hidden; color: var(--muted); font-size: 13px; text-align: center; }
+  .photoBox img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photoBtns { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  #photoInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  .btn { font: inherit; font-size: 16px; font-weight: 800; min-height: 48px; padding: 0 20px; border-radius: 10px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; }
+  .btn.small { min-height: 40px; font-size: 14px; padding: 0 14px; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.danger { color: var(--sale); border-color: var(--sale); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .actions { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+  .actions.edit { grid-template-columns: 2fr 1fr; }
+
+  details { margin: 0 0 16px; border: 1.5px solid var(--line); border-radius: 10px; padding: 0 12px; }
+  details summary { min-height: 46px; display: flex; align-items: center; font-weight: 800; font-size: 14px; cursor: pointer; }
+  details .field:last-child { margin-bottom: 14px; }
+
+  #msg { min-height: 1.5em; margin: 12px 0 0; font-weight: 700; font-size: 15px; }
+  #msg.ok { color: var(--ok); }
+  #msg.err, #loginErr { color: var(--sale); }
+  #loginErr { min-height: 1.5em; margin: 10px 0 0; font-weight: 700; }
+
+  .listHead { display: flex; align-items: center; gap: 10px; margin: 36px 0 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .listHead .count { color: var(--muted); font-weight: 700; font-size: 15px; }
+  #adminList { list-style: none; margin: 0; padding: 0 0 60px; display: grid; gap: 10px; }
+  .item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 12px; border: 1.5px solid var(--line); border-radius: 10px; }
+  .item.ended { background: var(--wash); }
+  .item .th { width: 64px; height: 64px; border-radius: 8px; background: var(--wash); display: grid; place-items: center; font-size: 30px; overflow: hidden; }
+  .item.ended .th { background: var(--line); }
+  .item .th img { width: 100%; height: 100%; object-fit: cover; }
+  .item .info { min-width: 0; }
+  .item .t { margin: 0; font-weight: 700; font-size: 15px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item .m { margin: 2px 0 8px; font-size: 13px; color: var(--muted); }
+  .item .m .tag { display: inline-block; background: var(--sticker); color: var(--ink); font-weight: 800; border-radius: 5px; padding: 0 6px; margin-right: 4px; }
+  .item .m .tag.end { background: var(--line); }
+  .item .bt { display: flex; gap: 8px; }
+  .empty { color: var(--muted); padding: 20px 0; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="loginView" hidden>
+  <div class="wrap" style="padding-top:20px">
+    <span class="brand">딜센트 관리</span>
+    <h1>관리자 로그인</h1>
+    <form id="loginForm">
+      <label class="field">
+        <span>비밀번호</span>
+        <input id="pw" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn primary" style="width:100%" type="submit">로그인</button>
+      <p id="loginErr" role="alert"></p>
+    </form>
+  </div>
+</div>
+
+<!-- 관리 화면 -->
+<div id="appView" hidden>
+  <header class="bar">
+    <div class="wrap">
+      <span class="brand">딜센트 관리</span>
+      <span class="spacer"></span>
+      <a href="/" target="_blank" rel="noopener">사이트 보기</a>
+      <button class="linkbtn" id="logout" type="button">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1 id="formTitle">새 딜 올리기</h1>
+
+    <form id="dealForm" novalidate>
+      <fieldset class="field">
+        <legend>판매처</legend>
+        <div class="seg" id="storeSeg">
+          <label><input type="radio" name="store" value="coupang"><span>쿠팡</span></label>
+          <label><input type="radio" name="store" value="musinsa"><span>무신사</span></label>
+          <label><input type="radio" name="store" value="naver"><span>네이버</span></label>
+          <label><input type="radio" name="store" value="toss"><span>토스</span></label>
+        </div>
+      </fieldset>
+
+      <label class="field">
+        <span>제휴 링크</span>
+        <input id="url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" placeholder="https://...">
+      </label>
+
+      <label class="field">
+        <span>제목</span>
+        <input id="title" type="text" maxlength="200" autocomplete="off" placeholder="상품 이름">
+      </label>
+
+      <div class="two">
+        <label class="field">
+          <span>현재가(원)</span>
+          <input id="price" type="text" inputmode="numeric" autocomplete="off" placeholder="39,900">
+        </label>
+        <label class="field">
+          <span>원래 가격(원)</span>
+          <input id="original" type="text" inputmode="numeric" autocomplete="off" placeholder="79,000">
+        </label>
+      </div>
+      <p class="hint" id="discountHint"></p>
+
+      <div class="field">
+        <span style="display:block;margin:0 0 6px;font-size:14px;font-weight:800">사진</span>
+        <div class="photoRow">
+          <div class="photoBox" id="photoBox">사진 없음</div>
+          <div class="photoBtns">
+            <button class="btn small" id="photoPick" type="button">사진 고르기</button>
+            <button class="btn small danger" id="photoClear" type="button" hidden>사진 빼기</button>
+          </div>
+          <input id="photoInput" type="file" accept="image/*" tabindex="-1">
+        </div>
+      </div>
+
+      <label class="field">
+        <span>메모</span>
+        <input id="note" type="text" maxlength="100" autocomplete="off" placeholder="예: 카드 할인가, 선착순">
+      </label>
+
+      <label class="field">
+        <span>마감</span>
+        <select id="expSel">
+          <option value="tonight">오늘 밤 23:59</option>
+          <option value="tomorrow">내일 밤 23:59</option>
+          <option value="d3">3일 뒤 23:59</option>
+          <option value="none">마감 없음</option>
+          <option value="custom">직접 입력</option>
+        </select>
+      </label>
+      <label class="field" id="expCustomBox" hidden>
+        <span>마감 시각</span>
+        <input id="expCustom" type="datetime-local">
+      </label>
+
+      <details>
+        <summary>추가 옵션</summary>
+        <label class="field">
+          <span>스티커 글자 (가격이 없을 때, 예: 쿠폰)</span>
+          <input id="badge" type="text" maxlength="12" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>사진이 없을 때 보여줄 이모지</span>
+          <input id="emoji" type="text" maxlength="8" autocomplete="off" placeholder="🎧">
+        </label>
+      </details>
+
+      <div class="actions" id="actions">
+        <button class="btn primary" id="submitBtn" type="submit">올리기</button>
+        <button class="btn" id="cancelEdit" type="button" hidden>취소</button>
+      </div>
+      <p id="msg" role="status"></p>
+    </form>
+
+    <div class="listHead">
+      <h2>올린 딜</h2>
+      <span class="count" id="count"></span>
+      <span class="spacer"></span>
+      <button class="btn small" id="purge" type="button">끝난 딜 정리</button>
+    </div>
+    <ul id="adminList"></ul>
+  </main>
+</div>
+
+<script>
+(function () {
+  var KEY = "dealcent_admin_pw";
+  var STORE_NAMES = { coupang: "쿠팡", musinsa: "무신사", naver: "네이버", toss: "토스" };
+
+  var pw = "";
+  var editId = null;
+  var imageData = null;       // 새로 고른 사진(줄인 JPEG)
+  var existingImage = null;   // 수정 중인 딜의 기존 사진 주소
+  var removeImage = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var loginView = $("loginView"), appView = $("appView");
+
+  function getSaved() { try { return localStorage.getItem(KEY) || ""; } catch (e) { return ""; } }
+  function setSaved(v) { try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+
+  function showLogin(msg) {
+    appView.hidden = true;
+    loginView.hidden = false;
+    $("loginErr").textContent = msg || "";
+  }
+  function showApp() {
+    loginView.hidden = true;
+    appView.hidden = false;
+  }
+
+  function api(path, opts) {
+    opts = opts || {};
+    var headers = { "Content-Type": "application/json", "Authorization": "Bearer " + pw };
+    return fetch(path, { method: opts.method || "GET", headers: headers, body: opts.body })
+      .then(function (res) {
+        return res.json().catch(function () { return null; }).then(function (data) {
+          if (res.status === 401) {
+            setSaved(""); pw = "";
+            showLogin((data && data.error) || "비밀번호가 맞지 않아요.");
+            throw new Error((data && data.error) || "로그인이 필요해요.");
+          }
+          if (!res.ok) throw new Error((data && data.error) || "요청에 실패했어요.");
+          return data;
+        });
+      });
+  }
+
+  // ---------- 로그인 ----------
+  function tryLogin(candidate, silent) {
+    pw = candidate;
+    return api("/api/admin/login", { method: "POST", body: "{}" })
+      .then(function () {
+        setSaved(candidate);
+        showApp();
+        resetForm();
+        loadList();
+      })
+      .catch(function (e) {
+        if (!silent) $("loginErr").textContent = e.message;
+        else showLogin("");
+      });
+  }
+  $("loginForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    $("loginErr").textContent = "";
+    tryLogin($("pw").value, false);
+  });
+  $("logout").addEventListener("click", function () {
+    setSaved(""); pw = ""; $("pw").value = ""; showLogin("");
+  });
+
+  // ---------- 입력 도우미 ----------
+  function guessStore(u) {
+    var s = u.toLowerCase();
+    if (/coupang\.com|coupa\.ng/.test(s)) return "coupang";
+    if (/musinsa\.com/.test(s)) return "musinsa";
+    if (/naver\.com|naver\.me/.test(s)) return "naver";
+    if (/toss\.im|toss\.me/.test(s)) return "toss";
+    return null;
+  }
+  function setStore(v) {
+    var radios = document.querySelectorAll('input[name="store"]');
+    for (var i = 0; i < radios.length; i++) radios[i].checked = (radios[i].value === v);
+  }
+  function getStore() {
+    var r = document.querySelector('input[name="store"]:checked');
+    return r ? r.value : "";
+  }
+  $("url").addEventListener("input", function () {
+    var g = guessStore(this.value.trim());
+    if (g) setStore(g);
+  });
+
+  function digits(s) { return String(s || "").replace(/[^0-9]/g, ""); }
+  function fmtInput(el) {
+    var d = digits(el.value);
+    el.value = d ? Number(d).toLocaleString("ko-KR") : "";
+    updateHint();
+  }
+  function updateHint() {
+    var p = Number(digits($("price").value)), o = Number(digits($("original").value));
+    var h = $("discountHint");
+    h.textContent = "";
+    if (p && o && o > p) {
+      h.appendChild(document.createTextNode("할인율 "));
+      var b = document.createElement("b");
+      b.textContent = Math.round((1 - p / o) * 100) + "%";
+      h.appendChild(b);
+      h.appendChild(document.createTextNode(" (스티커에 자동으로 표시돼요)"));
+    } else if (!p && !o) {
+      h.textContent = "가격이 없는 쿠폰 같은 딜은 가격을 비워두고, 추가 옵션에서 스티커 글자를 적어요.";
+    }
+  }
+  $("price").addEventListener("input", function () { fmtInput(this); });
+  $("original").addEventListener("input", function () { fmtInput(this); });
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function dayEnd(offset) {
+    var d = new Date();
+    d.setDate(d.getDate() + offset);
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " 23:59";
+  }
+  function computeExpires() {
+    var v = $("expSel").value;
+    if (v === "none") return null;
+    if (v === "tonight") return dayEnd(0);
+    if (v === "tomorrow") return dayEnd(1);
+    if (v === "d3") return dayEnd(3);
+    var c = $("expCustom").value;
+    return c ? c.replace("T", " ") : null;
+  }
+  $("expSel").addEventListener("change", function () {
+    $("expCustomBox").hidden = (this.value !== "custom");
+  });
+
+  // ---------- 사진 ----------
+  function renderPhoto() {
+    var box = $("photoBox");
+    box.innerHTML = "";
+    var src = imageData || (removeImage ? null : existingImage);
+    if (src) {
+      var img = document.createElement("img");
+      img.src = src; img.alt = "";
+      box.appendChild(img);
+      $("photoClear").hidden = false;
+    } else {
+      box.textContent = "사진 없음";
+      $("photoClear").hidden = true;
+    }
+  }
+  function toJpeg(file, maxSide, quality) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, maxSide / Math.max(w, h));
+        w = Math.max(1, Math.round(w * scale)); h = Math.max(1, Math.round(h * scale));
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("사진을 읽을 수 없어요. 다른 사진으로 해보세요.")); };
+      img.src = url;
+    });
+  }
+  $("photoPick").addEventListener("click", function () { $("photoInput").click(); });
+  $("photoInput").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    setMsg("사진을 줄이는 중...", "");
+    toJpeg(f, 900, 0.82).then(function (data) {
+      imageData = data; removeImage = false;
+      renderPhoto();
+      setMsg("", "");
+    }).catch(function (e) { setMsg(e.message, "err"); });
+    this.value = "";
+  });
+  $("photoClear").addEventListener("click", function () {
+    imageData = null; removeImage = true;
+    renderPhoto();
+  });
+
+  // ---------- 폼 ----------
+  function setMsg(text, kind) {
+    var m = $("msg");
+    m.textContent = text;
+    m.className = kind || "";
+  }
+  function resetForm() {
+    editId = null; imageData = null; existingImage = null; removeImage = false;
+    $("dealForm").reset();
+    setStore("");
+    $("expSel").value = "tonight";
+    $("expCustomBox").hidden = true;
+    $("formTitle").textContent = "새 딜 올리기";
+    $("submitBtn").textContent = "올리기";
+    $("cancelEdit").hidden = true;
+    $("actions").className = "actions";
+    renderPhoto();
+    updateHint();
+  }
+  $("cancelEdit").addEventListener("click", function () { resetForm(); setMsg("", ""); });
+
+  function startEdit(d) {
+    resetForm();
+    editId = d.id;
+    setStore(d.store);
+    $("url").value = d.url || "";
+    $("title").value = d.title || "";
+    $("price").value = d.price ? Number(d.price).toLocaleString("ko-KR") : "";
+    $("original").value = d.original ? Number(d.original).toLocaleString("ko-KR") : "";
+    $("note").value = d.note || "";
+    $("badge").value = d.badge || "";
+    $("emoji").value = d.emoji || "";
+    if (d.expires) {
+      $("expSel").value = "custom";
+      $("expCustomBox").hidden = false;
+      $("expCustom").value = d.expires.replace(" ", "T");
+    } else {
+      $("expSel").value = "none";
+    }
+    existingImage = d.image || null;
+    renderPhoto();
+    updateHint();
+    $("formTitle").textContent = "딜 수정하기";
+    $("submitBtn").textContent = "수정 저장";
+    $("cancelEdit").hidden = false;
+    $("actions").className = "actions edit";
+    setMsg("", "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  $("dealForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var store = getStore(), url = $("url").value.trim(), title = $("title").value.trim();
+    if (!store) return setMsg("판매처를 골라주세요.", "err");
+    if (!/^https?:\/\/\S+$/i.test(url)) return setMsg("제휴 링크를 https:// 로 시작하게 붙여넣어 주세요.", "err");
+    if (!title) return setMsg("제목을 입력해 주세요.", "err");
+    var expires = computeExpires();
+    if ($("expSel").value === "custom" && !expires) return setMsg("마감 시각을 입력하거나 다른 항목을 골라주세요.", "err");
+
+    var payload = {
+      store: store, url: url, title: title,
+      price: digits($("price").value) || null,
+      original: digits($("original").value) || null,
+      note: $("note").value.trim() || null,
+      badge: $("badge").value.trim() || null,
+      emoji: $("emoji").value.trim() || null,
+      expires: expires
+    };
+    if (imageData) payload.image_data = imageData;
+    else if (removeImage) payload.remove_image = true;
+
+    var btn = $("submitBtn");
+    var editing = editId !== null;
+    btn.disabled = true;
+    setMsg(editing ? "저장하는 중..." : "올리는 중...", "");
+
+    api(editing ? "/api/admin/deals/" + editId : "/api/admin/deals", {
+      method: editing ? "PUT" : "POST",
+      body: JSON.stringify(payload)
+    }).then(function () {
+      resetForm();
+      setMsg(editing ? "수정했어요. 사이트에 곧 반영돼요." : "올렸어요! 사이트에 바로 반영돼요.", "ok");
+      loadList();
+    }).catch(function (e) {
+      setMsg(e.message, "err");
+    }).then(function () { btn.disabled = false; });
+  });
+
+  // ---------- 목록 ----------
+  function won(n) { return Number(n).toLocaleString("ko-KR") + "원"; }
+  function isEnded(d) {
+    if (!d.expires) return false;
+    var t = new Date(String(d.expires).replace(" ", "T"));
+    return !isNaN(t) && t < new Date();
+  }
+  function loadList() {
+    fetch("/api/deals", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) { renderList(data.deals || []); })
+      .catch(function () {
+        var ul = $("adminList"); ul.innerHTML = "";
+        var li = document.createElement("li"); li.className = "empty";
+        li.textContent = "목록을 불러오지 못했어요. 새로고침해 주세요.";
+        ul.appendChild(li);
+      });
+  }
+  function renderList(deals) {
+    var ul = $("adminList");
+    ul.innerHTML = "";
+    $("count").textContent = deals.length ? deals.length + "개" : "";
+    if (!deals.length) {
+      var li = document.createElement("li"); li.className = "empty";
+      li.textContent = "아직 올린 딜이 없어요. 위에서 첫 딜을 올려보세요.";
+      ul.appendChild(li);
+      return;
+    }
+    deals.forEach(function (d) {
+      var ended = isEnded(d);
+      var li = document.createElement("li");
+      li.className = "item" + (ended ? " ended" : "");
+
+      var th = document.createElement("div");
+      th.className = "th";
+      if (d.image) {
+        var img = document.createElement("img");
+        img.src = d.image; img.alt = ""; img.loading = "lazy";
+        th.appendChild(img);
+      } else {
+        th.textContent = d.emoji || "\uD83D\uDECD\uFE0F";
+      }
+
+      var info = document.createElement("div");
+      info.className = "info";
+      var t = document.createElement("p");
+      t.className = "t"; t.textContent = d.title;
+      var m = document.createElement("p");
+      m.className = "m";
+      var tag = document.createElement("span");
+      tag.className = "tag" + (ended ? " end" : "");
+      tag.textContent = ended ? "마감" : (STORE_NAMES[d.store] || d.store);
+      m.appendChild(tag);
+      var extra = (ended ? (STORE_NAMES[d.store] || d.store) + " " : "") + (d.price ? won(d.price) : (d.badge || ""));
+      m.appendChild(document.createTextNode(extra.trim()));
+
+      var bt = document.createElement("div");
+      bt.className = "bt";
+      var e = document.createElement("button");
+      e.type = "button"; e.className = "btn small"; e.textContent = "수정";
+      e.addEventListener("click", function () { startEdit(d); });
+      var x = document.createElement("button");
+      x.type = "button"; x.className = "btn small danger"; x.textContent = "삭제";
+      x.addEventListener("click", function () {
+        if (!confirm("이 딜을 삭제할까요?\n" + d.title)) return;
+        api("/api/admin/deals/" + d.id, { method: "DELETE" })
+          .then(function () {
+            if (editId === d.id) resetForm();
+            setMsg("삭제했어요.", "ok");
+            loadList();
+          })
+          .catch(function (er) { setMsg(er.message, "err"); });
+      });
+      bt.appendChild(e); bt.appendChild(x);
+
+      info.appendChild(t); info.appendChild(m); info.appendChild(bt);
+      li.appendChild(th); li.appendChild(info);
+      ul.appendChild(li);
+    });
+  }
+  $("purge").addEventListener("click", function () {
+    if (!confirm("마감 시간이 지난 딜을 모두 삭제할까요?")) return;
+    api("/api/admin/ended", { method: "DELETE" })
+      .then(function (r) { setMsg("끝난 딜 " + (r.deleted || 0) + "개를 정리했어요.", "ok"); loadList(); })
+      .catch(function (er) { setMsg(er.message, "err"); });
+  });
+
+  // ---------- 시작 ----------
+  var saved = getSaved();
+  if (saved) tryLogin(saved, true);
+  else showLogin("");
+})();
+</script>
+</body>
+</html>

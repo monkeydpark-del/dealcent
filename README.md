@@ -1,2 +1,4 @@
 # 딜센트
-핫딜 목록은 public/deals.js 를 수정하세요.
+- 사이트: public/index.html
+- 관리자 페이지: 사이트주소/admin
+- 서버: src/index.js

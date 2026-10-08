@@ -287,7 +287,6 @@
   </div>
 </footer>
 
-<script src="deals.js"></script>
 <script>
 (function () {
   var STORES = {
@@ -297,37 +296,50 @@
     toss:    { name: "토스",   color: "#0064FF" }
   };
 
-  var deals = (typeof DEALS !== "undefined" ? DEALS : []).map(function (d) {
-    var ended = false;
-    if (d.expires) {
-      var t = new Date(String(d.expires).replace(" ", "T"));
-      ended = !isNaN(t) && t < new Date();
-    }
-    return Object.assign({}, d, { ended: ended });
-  });
-
-  // 진행 중인 딜을 먼저, 끝난 딜은 뒤로 (각 그룹 안에서는 적은 순서 유지)
-  deals = deals.filter(function (d) { return !d.ended; })
-               .concat(deals.filter(function (d) { return d.ended; }));
-
-  var active = deals.filter(function (d) { return !d.ended; });
-
-  // 날짜 문구
-  var now = new Date();
-  var dateText = now.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
-  var when = document.getElementById("when");
-  when.innerHTML = "";
-  when.appendChild(document.createTextNode(dateText + ", 지금 확인할 특가 "));
-  var b = document.createElement("b");
-  b.textContent = active.length + "개";
-  when.appendChild(b);
-
-  // 필터
+  var deals = [];
+  var active = [];
   var current = "all";
   var chips = document.getElementById("chips");
   var list = document.getElementById("list");
+  var whenEl = document.getElementById("when");
+
+  function prepare(raw) {
+    deals = raw.map(function (d) {
+      var ended = false;
+      if (d.expires) {
+        var t = new Date(String(d.expires).replace(" ", "T"));
+        ended = !isNaN(t) && t < new Date();
+      }
+      return Object.assign({}, d, { ended: ended });
+    });
+    // 진행 중인 딜을 먼저, 끝난 딜은 뒤로 (각 그룹 안에서는 최신순 유지)
+    deals = deals.filter(function (d) { return !d.ended; })
+                 .concat(deals.filter(function (d) { return d.ended; }));
+    active = deals.filter(function (d) { return !d.ended; });
+  }
+
+  function renderWhen(loading) {
+    var dateText = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    whenEl.innerHTML = "";
+    if (loading) {
+      whenEl.appendChild(document.createTextNode(dateText));
+      return;
+    }
+    whenEl.appendChild(document.createTextNode(dateText + ", 지금 확인할 특가 "));
+    var b = document.createElement("b");
+    b.textContent = active.length + "개";
+    whenEl.appendChild(b);
+  }
 
   function won(n) { return Number(n).toLocaleString("ko-KR") + "원"; }
+
+  function showMessage(text) {
+    list.innerHTML = "";
+    var li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = text;
+    list.appendChild(li);
+  }
 
   function renderChips() {
     chips.innerHTML = "";
@@ -356,15 +368,12 @@
   }
 
   function renderList() {
-    list.innerHTML = "";
     var shown = deals.filter(function (d) { return current === "all" || d.store === current; });
     if (shown.length === 0) {
-      var li = document.createElement("li");
-      li.className = "empty";
-      li.textContent = "아직 올라온 특가가 없어요. 잠시 뒤에 다시 확인해 주세요.";
-      list.appendChild(li);
+      showMessage("아직 올라온 특가가 없어요. 잠시 뒤에 다시 확인해 주세요.");
       return;
     }
+    list.innerHTML = "";
     shown.forEach(function (d) {
       var store = STORES[d.store] || { name: d.store || "기타", color: "#17171B" };
       var li = document.createElement("li");
@@ -375,7 +384,6 @@
       a.target = "_blank";
       a.rel = "sponsored noopener noreferrer";
 
-      // 썸네일 + 할인 스티커
       var thumb = document.createElement("div");
       thumb.className = "thumb";
       if (d.image) {
@@ -383,7 +391,7 @@
         img.src = d.image; img.alt = ""; img.loading = "lazy";
         thumb.appendChild(img);
       } else {
-        thumb.textContent = d.emoji || "🛍️";
+        thumb.textContent = d.emoji || "\uD83D\uDECD\uFE0F";
       }
       var sticker = document.createElement("span");
       sticker.className = "sticker";
@@ -394,7 +402,6 @@
       }
       thumb.appendChild(sticker);
 
-      // 본문
       var body = document.createElement("div");
       body.className = "body";
 
@@ -446,8 +453,24 @@
     });
   }
 
-  renderChips();
-  renderList();
+  renderWhen(true);
+  showMessage("특가를 불러오는 중이에요...");
+
+  fetch("/api/deals", { cache: "no-cache" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("bad status");
+      return r.json();
+    })
+    .then(function (data) {
+      prepare(data.deals || []);
+      renderWhen(false);
+      renderChips();
+      renderList();
+    })
+    .catch(function () {
+      renderWhen(true);
+      showMessage("특가를 불러오지 못했어요. 새로고침해 주세요.");
+    });
 })();
 </script>
 </body>
