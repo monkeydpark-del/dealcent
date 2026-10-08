@@ -1,81 +1,515 @@
-// ============================================================
-//  딜센트 핫딜 목록  (매일 이 파일만 수정하면 됩니다)
-// ============================================================
-//
-//  딜 하나는 { ... }, 로 적습니다. 맨 위에 있는 딜이 제일 먼저 보여요.
-//  새 딜을 올릴 때는 아래 샘플 한 덩어리를 복사해서 [ 바로 아래에 붙여넣으세요.
-//
-//  store    : "coupang" | "musinsa" | "naver" | "toss"   (필수)
-//  title    : 상품 이름                                    (필수)
-//  url      : 내 제휴 링크 (파트너스에서 만든 링크)           (필수)
-//  price    : 지금 가격 (숫자만, 쉼표 없이)                  (선택)
-//  original : 원래 가격 (숫자만) - 넣으면 할인율이 자동 계산돼요 (선택)
-//  badge    : 가격 정보가 없을 때 스티커에 쓸 글자 (예: "쿠폰", "무료배송") (선택)
-//  note     : 한 줄 메모 (예: "카드 할인가", "오늘만") (선택)
-//  emoji    : 이미지가 없을 때 대신 보여줄 이모지 (선택)
-//  image    : 상품 이미지 주소 (선택, 있으면 emoji 대신 표시)
-//  expires  : 마감 시각 "2026-10-09 23:59" (선택, 지나면 자동으로 '마감' 처리)
-//
-//  주의: 글자는 "따옴표"로 감싸고, 한 덩어리가 끝날 때마다 쉼표(,)를 꼭 붙이세요.
-// ============================================================
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>딜센트 | 오늘의 특가 모아보기 </title>
+<meta name="description" content="쿠팡, 무신사, 네이버, 토스의 오늘 특가를 한 곳에서 확인하세요. 딜센트가 매일 골라 올립니다.">
+<meta property="og:title" content="딜센트 | 오늘의 특가 모음">
+<meta property="og:description" content="쿠팡, 무신사, 네이버, 토스의 오늘 특가를 한 곳에서 확인하세요.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#111827">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🏷️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --navy: #111827;
+    --ink: #111827;
+    --bg: #F4F5F7;
+    --paper: #FFFFFF;
+    --line: #E5E7EB;
+    --muted: #6B7280;
+    --accent: #F04438;
+    --sale: #E5352B;
+    --hdr: 52px;
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-padding-top: 100px; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-const DEALS = [
-  {
-    store: "coupang",
-    title: "수뜰리에 퍼퓸 고체 탈취제, 밤쉘향, 310g, 2개",
-    url: "https://toss.shopping/_m/Rsh0TMIy",
-    price: 6930,
-    original: 79000,
-    note: "와우 회원 무료배송",
-    emoji: "🎧",
-    expires: "2026-12-31 23:59",
-  },
-  {
-    store: "musinsa",
-    title: "[샘플] 오버핏 후드 집업 (3컬러)",
-    url: "https://www.musinsa.com/",
-    price: 45000,
-    original: 69000,
-    note: "쿠폰 적용가",
-    emoji: "🧥",
-    expires: "2026-12-31 23:59",
-  },
-  {
-    store: "naver",
-    title: "[샘플] 대용량 물티슈 100매 20팩",
-    url: "https://shopping.naver.com/",
-    price: 16900,
-    original: 24900,
-    note: "네이버 플러스 멤버십 추가 적립",
-    emoji: "🧻",
-    expires: "2026-12-31 23:59",
-  },
-  {
-    store: "toss",
-    title: "[샘플] 토스페이 결제 시 추가 할인 쿠폰",
-    url: "https://toss.im/",
-    badge: "쿠폰",
-    note: "결제 금액 5% 할인, 선착순",
-    emoji: "🎟️",
-    expires: "2026-12-31 23:59",
-  },
-  {
-    store: "coupang",
-    title: "[샘플] 로켓배송 생수 2L 12병",
-    url: "https://www.coupang.com/",
-    price: 6900,
-    original: 9900,
-    emoji: "💧",
-    expires: "2026-12-31 23:59",
-  },
-  {
-    store: "musinsa",
-    title: "[샘플] 지난 시즌 러닝화 마감 임박",
-    url: "https://www.musinsa.com/",
-    price: 59000,
-    original: 129000,
-    note: "이미 끝난 딜은 이렇게 흐리게 보여요",
-    emoji: "👟",
-    expires: "2026-01-01 00:00",
-  },
-];
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+  /* 상단 바 */
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: var(--hdr);
+    background: var(--navy);
+    color: #fff;
+  }
+  .hdr .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .brand {
+    color: #fff;
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+  .chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    text-decoration: none;
+  }
+
+  /* 제휴 안내 */
+  .disclose { background: var(--paper); border-bottom: 1px solid var(--line); }
+  .disclose p { margin: 0; padding: 9px 0; font-size: 13px; color: var(--muted); }
+
+  /* 소개 */
+  .hero { padding: 22px 0 14px; }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(24px, 6vw, 30px);
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+  .hero .when { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+  .hero .when b { color: var(--ink); font-weight: 800; }
+
+  /* 판매처 필터 */
+  .bar {
+    position: sticky;
+    top: var(--hdr);
+    z-index: 9;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .chips {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    max-width: 960px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+  .chip .n { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .chip[aria-pressed="true"] .n { color: #C7CCD6; }
+  .chip[aria-pressed="true"] .dot { box-shadow: 0 0 0 2px #fff; }
+
+  /* 딜 목록 */
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 16px 0 6px;
+    display: grid;
+    gap: 10px 14px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) {
+    .list { grid-template-columns: 1fr 1fr; }
+  }
+  .deal {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+  .deal:hover { border-color: #C5CAD3; }
+
+  .thumb {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    border-radius: 8px;
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; }
+  .sticker {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    padding: 2px 7px 3px;
+    border-radius: 5px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .body { min-width: 0; display: flex; flex-direction: column; }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .store i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .title {
+    margin: 2px 0 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .note { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); }
+  .priceRow {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 7px;
+  }
+  .price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--sale);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .orig {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: line-through;
+    font-variant-numeric: tabular-nums;
+  }
+  .go {
+    margin-left: auto;
+    align-self: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 999px;
+    padding: 5px 12px;
+    white-space: nowrap;
+  }
+
+  .deal.ended { pointer-events: none; }
+  .deal.ended .thumb, .deal.ended .body { opacity: .45; }
+  .deal.ended .sticker { background: #9CA3AF; }
+  .deal.ended .go { background: var(--line); color: var(--muted); }
+  .deal.ended .price { color: var(--muted); }
+
+  .empty { grid-column: 1 / -1; padding: 36px 0; color: var(--muted); font-size: 15px; }
+
+  /* 오픈채팅 안내 */
+  .join {
+    margin: 14px 0 0;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .join strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+  .join span { display: block; margin-top: 2px; font-size: 13px; color: #C7CCD6; }
+  .join a {
+    flex: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+
+  /* 하단 */
+  footer { padding: 22px 0 44px; }
+  footer p { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); max-width: 70ch; }
+  footer .copy { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 420px) {
+    .deal { grid-template-columns: 80px 1fr; gap: 12px; }
+    .thumb { width: 80px; height: 80px; font-size: 34px; }
+    .join { flex-direction: column; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="./">딜센트</a>
+    <a class="chat" href="https://open.kakao.com/o/gloEECzi" target="_blank" rel="noopener">💬 오픈채팅</a>
+  </div>
+</header>
+
+<div class="disclose">
+  <div class="wrap"><p>✔️링크를 통해 구매시 수수료를 제공받습니다.</p></div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>오늘 특가</h1>
+      <p class="when" id="when"></p>
+    </div>
+  </section>
+
+  <nav class="bar" aria-label="판매처 선택">
+    <div class="chips" id="chips"></div>
+  </nav>
+
+  <div class="wrap">
+    <ul class="list" id="list"></ul>
+
+    <div class="join">
+      <div>
+        <strong>🔥 실시간 핫딜 알림방</strong>
+        <span>핫딜 소식은 오픈채팅방에서도 확인하세요.</span>
+      </div>
+      <a href="https://open.kakao.com/o/gloEECzi" target="_blank" rel="noopener">입장하기</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>✔️링크를 통해 구매시 수수료를 제공받습니다.</p>
+    <p>가격과 재고, 혜택은 판매처에서 수시로 바뀔 수 있으니 결제 전에 판매처 페이지에서 꼭 다시 확인해 주세요.</p>
+    <p class="copy">© Dealcent</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var STORES = {
+    coupang: { name: "쿠팡",   color: "#E52528" },
+    musinsa: { name: "무신사", color: "#17171B" },
+    naver:   { name: "네이버", color: "#03A94D" },
+    toss:    { name: "토스",   color: "#0064FF" }
+  };
+
+  var deals = [];
+  var active = [];
+  var current = "all";
+  var chips = document.getElementById("chips");
+  var list = document.getElementById("list");
+  var whenEl = document.getElementById("when");
+
+  function prepare(raw) {
+    deals = raw.map(function (d) {
+      var ended = false;
+      if (d.expires) {
+        var t = new Date(String(d.expires).replace(" ", "T"));
+        ended = !isNaN(t) && t < new Date();
+      }
+      return Object.assign({}, d, { ended: ended });
+    });
+    // 진행 중인 딜을 먼저, 끝난 딜은 뒤로 (각 그룹 안에서는 최신순 유지)
+    deals = deals.filter(function (d) { return !d.ended; })
+                 .concat(deals.filter(function (d) { return d.ended; }));
+    active = deals.filter(function (d) { return !d.ended; });
+  }
+
+  function renderWhen(loading) {
+    var dateText = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    whenEl.innerHTML = "";
+    if (loading) {
+      whenEl.appendChild(document.createTextNode(dateText));
+      return;
+    }
+    whenEl.appendChild(document.createTextNode(dateText + ", 지금 확인할 특가 "));
+    var b = document.createElement("b");
+    b.textContent = active.length + "개";
+    whenEl.appendChild(b);
+  }
+
+  function won(n) { return Number(n).toLocaleString("ko-KR") + "원"; }
+
+  function showMessage(text) {
+    list.innerHTML = "";
+    var li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = text;
+    list.appendChild(li);
+  }
+
+  function renderChips() {
+    chips.innerHTML = "";
+    var items = [{ key: "all", name: "전체", color: "#17171B", count: active.length }];
+    Object.keys(STORES).forEach(function (k) {
+      var c = active.filter(function (d) { return d.store === k; }).length;
+      if (c > 0) items.push({ key: k, name: STORES[k].name, color: STORES[k].color, count: c });
+    });
+    items.forEach(function (it) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.setAttribute("aria-pressed", String(current === it.key));
+      var dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = it.color;
+      var label = document.createElement("span");
+      label.textContent = it.name;
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = it.count;
+      btn.appendChild(dot); btn.appendChild(label); btn.appendChild(n);
+      btn.addEventListener("click", function () { current = it.key; renderChips(); renderList(); });
+      chips.appendChild(btn);
+    });
+  }
+
+  function renderList() {
+    var shown = deals.filter(function (d) { return current === "all" || d.store === current; });
+    if (shown.length === 0) {
+      showMessage("아직 올라온 특가가 없어요. 잠시 뒤에 다시 확인해 주세요.");
+      return;
+    }
+    list.innerHTML = "";
+    shown.forEach(function (d) {
+      var store = STORES[d.store] || { name: d.store || "기타", color: "#17171B" };
+      var li = document.createElement("li");
+
+      var a = document.createElement("a");
+      a.className = "deal" + (d.ended ? " ended" : "");
+      a.href = d.url || "#";
+      a.target = "_blank";
+      a.rel = "sponsored noopener noreferrer";
+
+      var thumb = document.createElement("div");
+      thumb.className = "thumb";
+      if (d.image) {
+        var img = document.createElement("img");
+        img.src = d.image; img.alt = ""; img.loading = "lazy";
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = d.emoji || "\uD83D\uDECD\uFE0F";
+      }
+      var sticker = document.createElement("span");
+      sticker.className = "sticker";
+      if (d.price && d.original && d.original > d.price) {
+        sticker.textContent = Math.round((1 - d.price / d.original) * 100) + "%";
+      } else {
+        sticker.textContent = d.badge || "특가";
+      }
+      thumb.appendChild(sticker);
+
+      var body = document.createElement("div");
+      body.className = "body";
+
+      var s = document.createElement("span");
+      s.className = "store";
+      var i = document.createElement("i");
+      i.style.background = store.color;
+      s.appendChild(i);
+      s.appendChild(document.createTextNode(store.name));
+
+      var h = document.createElement("h2");
+      h.className = "title";
+      h.textContent = d.title || "";
+
+      body.appendChild(s);
+      body.appendChild(h);
+
+      if (d.note) {
+        var note = document.createElement("p");
+        note.className = "note";
+        note.textContent = d.note;
+        body.appendChild(음표);
+      }
+
+      var row = document.createElement("div");
+      row.className = "priceRow";
+      if (d.price) {
+        var p = document.createElement("span");
+        p.className = "price";
+        p.textContent = won(d.price);
+        row.appendChild(p);
+        if (d.original && d.original > d.price) {
+          var o = document.createElement("span");
+          o.className = "orig";
+          o.textContent = won(d.original);
+          row.appendChild(o);
+        }
+      }
+      var go = document.createElement("span");
+      go.className = "go";
+      go.textContent = d.ended ? "마감" : "보러가기";
+      row.appendChild(go);
+      body.appendChild(row);
+
+      a.appendChild(thumb);
+      a.appendChild(body);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  }
+
+  renderWhen(true);
+  showMessage("특가를 불러오는 중이에요...");
+
+  fetch("/api/deals", { cache: "no-cache" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("bad status");
+      return r.json();
+    })
+    .then(function (data) {
+      prepare(data.deals || []);
+      renderWhen(false);
+      renderChips();
+      renderList();
+    })
+    .catch(function () {
+      renderWhen(true);
+      showMessage("특가를 불러오지 못했어요. 새로고침해 주세요.");
+    });
+})();
+</script>
+</body>
+</html>
