@@ -22,9 +22,9 @@
 const DEALS = [
   {
     store: "coupang",
-    title: "[샘플] 무선 블루투스 이어폰 노이즈 캔슬링",
-    url: "https://www.coupang.com/",
-    price: 39900,
+    title: "수뜰리에 퍼퓸 고체 탈취제, 밤쉘향, 310g, 2개",
+    url: "https://toss.shopping/_m/Rsh0TMIy",
+    price: 6930,
     original: 79000,
     note: "와우 회원 무료배송",
     emoji: "🎧",
