@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>딜센트 | 오늘의 특가 모음</title>
+<meta name="description" content="쿠팡, 무신사, 네이버, 토스의 오늘 특가를 한 곳에서 확인하세요. 딜센트가 매일 골라 올립니다.">
+<meta property="og:title" content="딜센트 | 오늘의 특가 모음">
+<meta property="og:description" content="쿠팡, 무신사, 네이버, 토스의 오늘 특가를 한 곳에서 확인하세요.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FFD21F">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🏷️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --ink: #17171B;
+    --paper: #FFFFFF;
+    --wash: #F5F5F2;
+    --line: #E4E4DE;
+    --muted: #666670;
+    --sticker: #FFD21F;
+    --sale: #D92B1F;
+    --radius: 10px;
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  /* 상단 */
+  .top { padding: 18px 0 0; }
+  .brand {
+    display: inline-block;
+    background: var(--sticker);
+    color: var(--ink);
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+    padding: 4px 12px 5px;
+    border-radius: 8px;
+    transform: rotate(-3deg);
+    text-decoration: none;
+  }
+
+  /* 히어로 */
+  .hero { padding: 44px 0 28px; }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(46px, 11vw, 88px);
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: -0.045em;
+  }
+  .hero .when {
+    margin: 14px 0 0;
+    font-size: clamp(16px, 2.6vw, 20px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .hero .when b { font-weight: 900; }
+  .notice {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  /* 판매처 필터 */
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: rgba(255,255,255,.96);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+  }
+  .chips {
+    display: flex;
+    gap: 8px;
+    padding: 10px 20px;
+    max-width: 960px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+  .chip .n { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .chip[aria-pressed="true"] .n { color: #CFCFD6; }
+  .chip[aria-pressed="true"] .dot { box-shadow: 0 0 0 2px #fff; }
+
+  /* 딜 목록 */
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 24px 0 8px;
+    display: grid;
+    gap: 14px 24px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) {
+    .list { grid-template-columns: 1fr 1fr; }
+  }
+  .deal {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    padding: 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--paper);
+    text-decoration: none;
+    position: relative;
+    transition: background-color .15s;
+  }
+  .deal:hover { background: var(--wash); }
+
+  .thumb {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 8px;
+    background: var(--wash);
+    display: grid;
+    place-items: center;
+    font-size: 46px;
+    overflow: visible;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; }
+  .sticker {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    background: var(--sticker);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    padding: 3px 8px 4px;
+    border-radius: 6px;
+    transform: rotate(-6deg);
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 1px 0 rgba(0,0,0,.28);
+    white-space: nowrap;
+  }
+
+  .body { min-width: 0; display: flex; flex-direction: column; }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .store i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .title {
+    margin: 3px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.38;
+    letter-spacing: -0.02em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .note { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+  .priceRow {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+  }
+  .price {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--sale);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .orig {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: line-through;
+    font-variant-numeric: tabular-nums;
+  }
+  .go {
+    margin-left: auto;
+    align-self: center;
+    font-size: 14px;
+    font-weight: 800;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+
+  .deal.ended { border-color: var(--line); pointer-events: none; }
+  .deal.ended .thumb, .deal.ended .body { opacity: .45; }
+  .deal.ended .sticker { background: var(--line); box-shadow: none; }
+  .deal.ended .go { background: var(--line); color: var(--muted); }
+  .deal.ended .price { color: var(--muted); }
+
+  .empty {
+    grid-column: 1 / -1;
+    padding: 40px 0;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  /* 하단 */
+  footer { margin-top: 36px; padding: 28px 0 48px; background: var(--wash); border-top: 1px solid var(--line); }
+  footer p { margin: 0 0 8px; font-size: 13px; color: var(--muted); max-width: 70ch; }
+  footer .copy { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 420px) {
+    .deal { grid-template-columns: 84px 1fr; gap: 14px; padding: 14px; }
+    .thumb { width: 84px; height: 84px; font-size: 40px; }
+    .price { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap"><a class="brand" href="./">딜센트</a></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>오늘 특가</h1>
+      <p class="when" id="when"></p>
+      <p class="notice">이 사이트의 링크를 통해 구매하시면 판매자로부터 일정액의 수수료를 받을 수 있으며, 구매 가격은 달라지지 않습니다.</p>
+    </div>
+  </section>
+
+  <nav class="bar" aria-label="판매처 선택">
+    <div class="chips" id="chips"></div>
+  </nav>
+
+  <div class="wrap">
+    <ul class="list" id="list"></ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="copy">딜센트</p>
+    <p>이 사이트는 쿠팡 파트너스 등 제휴 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있습니다.</p>
+    <p>가격과 재고, 혜택은 판매처에서 수시로 바뀔 수 있으니 결제 전에 판매처 페이지에서 꼭 다시 확인해 주세요.</p>
+  </div>
+</footer>
+
+<script src="deals.js"></script>
+<script>
+(function () {
+  var STORES = {
+    coupang: { name: "쿠팡",   color: "#E52528" },
+    musinsa: { name: "무신사", color: "#17171B" },
+    naver:   { name: "네이버", color: "#03A94D" },
+    toss:    { name: "토스",   color: "#0064FF" }
+  };
+
+  var deals = (typeof DEALS !== "undefined" ? DEALS : []).map(function (d) {
+    var ended = false;
+    if (d.expires) {
+      var t = new Date(String(d.expires).replace(" ", "T"));
+      ended = !isNaN(t) && t < new Date();
+    }
+    return Object.assign({}, d, { ended: ended });
+  });
+
+  // 진행 중인 딜을 먼저, 끝난 딜은 뒤로 (각 그룹 안에서는 적은 순서 유지)
+  deals = deals.filter(function (d) { return !d.ended; })
+               .concat(deals.filter(function (d) { return d.ended; }));
+
+  var active = deals.filter(function (d) { return !d.ended; });
+
+  // 날짜 문구
+  var now = new Date();
+  var dateText = now.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+  var when = document.getElementById("when");
+  when.innerHTML = "";
+  when.appendChild(document.createTextNode(dateText + ", 지금 확인할 특가 "));
+  var b = document.createElement("b");
+  b.textContent = active.length + "개";
+  when.appendChild(b);
+
+  // 필터
+  var current = "all";
+  var chips = document.getElementById("chips");
+  var list = document.getElementById("list");
+
+  function won(n) { return Number(n).toLocaleString("ko-KR") + "원"; }
+
+  function renderChips() {
+    chips.innerHTML = "";
+    var items = [{ key: "all", name: "전체", color: "#17171B", count: active.length }];
+    Object.keys(STORES).forEach(function (k) {
+      var c = active.filter(function (d) { return d.store === k; }).length;
+      if (c > 0) items.push({ key: k, name: STORES[k].name, color: STORES[k].color, count: c });
+    });
+    items.forEach(function (it) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.setAttribute("aria-pressed", String(current === it.key));
+      var dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = it.color;
+      var label = document.createElement("span");
+      label.textContent = it.name;
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = it.count;
+      btn.appendChild(dot); btn.appendChild(label); btn.appendChild(n);
+      btn.addEventListener("click", function () { current = it.key; renderChips(); renderList(); });
+      chips.appendChild(btn);
+    });
+  }
+
+  function renderList() {
+    list.innerHTML = "";
+    var shown = deals.filter(function (d) { return current === "all" || d.store === current; });
+    if (shown.length === 0) {
+      var li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = "아직 올라온 특가가 없어요. 잠시 뒤에 다시 확인해 주세요.";
+      list.appendChild(li);
+      return;
+    }
+    shown.forEach(function (d) {
+      var store = STORES[d.store] || { name: d.store || "기타", color: "#17171B" };
+      var li = document.createElement("li");
+
+      var a = document.createElement("a");
+      a.className = "deal" + (d.ended ? " ended" : "");
+      a.href = d.url || "#";
+      a.target = "_blank";
+      a.rel = "sponsored noopener noreferrer";
+
+      // 썸네일 + 할인 스티커
+      var thumb = document.createElement("div");
+      thumb.className = "thumb";
+      if (d.image) {
+        var img = document.createElement("img");
+        img.src = d.image; img.alt = ""; img.loading = "lazy";
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = d.emoji || "🛍️";
+      }
+      var sticker = document.createElement("span");
+      sticker.className = "sticker";
+      if (d.price && d.original && d.original > d.price) {
+        sticker.textContent = Math.round((1 - d.price / d.original) * 100) + "%";
+      } else {
+        sticker.textContent = d.badge || "특가";
+      }
+      thumb.appendChild(sticker);
+
+      // 본문
+      var body = document.createElement("div");
+      body.className = "body";
+
+      var s = document.createElement("span");
+      s.className = "store";
+      var i = document.createElement("i");
+      i.style.background = store.color;
+      s.appendChild(i);
+      s.appendChild(document.createTextNode(store.name));
+
+      var h = document.createElement("h2");
+      h.className = "title";
+      h.textContent = d.title || "";
+
+      body.appendChild(s);
+      body.appendChild(h);
+
+      if (d.note) {
+        var note = document.createElement("p");
+        note.className = "note";
+        note.textContent = d.note;
+        body.appendChild(note);
+      }
+
+      var row = document.createElement("div");
+      row.className = "priceRow";
+      if (d.price) {
+        var p = document.createElement("span");
+        p.className = "price";
+        p.textContent = won(d.price);
+        row.appendChild(p);
+        if (d.original && d.original > d.price) {
+          var o = document.createElement("span");
+          o.className = "orig";
+          o.textContent = won(d.original);
+          row.appendChild(o);
+        }
+      }
+      var go = document.createElement("span");
+      go.className = "go";
+      go.textContent = d.ended ? "마감" : "보러가기";
+      row.appendChild(go);
+      body.appendChild(row);
+
+      a.appendChild(thumb);
+      a.appendChild(body);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  }
+
+  renderChips();
+  renderList();
+})();
+</script>
+</body>
+</html>
