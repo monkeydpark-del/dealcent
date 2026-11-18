@@ -888,16 +888,18 @@
 
   function setSub(shownCount) {
     var base = todayLine();
-    var filtering = state.store !== "all" || state.q.trim() !== "";
+    var kw = state.q.trim();
+    var isStore = state.store !== "all";
     if (!loaded) {
       els.sub.textContent = base;
-    } else if (filtering) {
-      var who = state.store === "all" ? "" : STORE[state.store].name + " ";
-      var kw = state.q.trim();
-      var bits = [];
-      if (who) bits.push(who.trim());
-      if (kw) bits.push("‘" + kw + "’");
-      els.sub.textContent = (bits.length ? bits.join(" · ") + " 검색 결과 " : "조건에 맞는 특가 ") + shownCount + "개";
+      return;
+    }
+    if (isStore && kw) {
+      els.sub.textContent = STORE[state.store].name + " · ‘" + kw + "’ 검색 결과 " + shownCount + "개";
+    } else if (kw) {
+      els.sub.textContent = "‘" + kw + "’ 검색 결과 " + shownCount + "개";
+    } else if (isStore) {
+      els.sub.textContent = STORE[state.store].name + " 특가 " + shownCount + "개";
     } else {
       els.sub.textContent = base + " · 지금 확인할 특가 " + shownCount + "개";
     }
