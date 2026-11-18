@@ -192,6 +192,11 @@
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
+  .chip .n[hidden] { display: none; }
+  .chip.is-zero { color: var(--muted); }
+  .chip.is-zero .dot { opacity: .45; }
+  .chip.is-zero[aria-pressed="true"] { color: #fff; }
+  .chip.is-zero[aria-pressed="true"] .dot { opacity: .8; }
   .chip[aria-pressed="true"] {
     background: var(--ink);
     border-color: var(--ink);
@@ -261,6 +266,15 @@
     font-size: 11.5px;
     color: var(--muted);
     letter-spacing: -.01em;
+  }
+  .disclose.joinDisclose {
+    margin: 10px 0 0;
+    text-align: right;
+    font-weight: 600;
+    color: var(--ink2);
+  }
+  @media (max-width: 420px) {
+    .disclose.joinDisclose { text-align: center; }
   }
 
   /* ───────── 카드 그리드 ───────── */
@@ -498,32 +512,43 @@
     cursor: pointer;
   }
 
-  /* 마감된 딜 */
-  .endedWrap { margin-top: 30px; }
+  /* 마감된 딜 (기본 접힘) */
+  .endedWrap { margin-top: 22px; }
   .endedWrap[hidden] { display: none; }
-  .endedHead {
+  .endedToggle {
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin: 0 0 12px;
-    font-size: 15px;
+    gap: 6px;
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--paper);
+    border: 1px solid var(--line2);
+    border-radius: 14px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: -.03em;
     color: var(--ink2);
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
   }
-  .endedHead span {
-    font-size: 12px;
+  .endedToggle:hover { background: #FAFBFC; border-color: #DCE0E5; }
+  .endedToggle .endedCount {
+    font-size: 12.5px;
     font-weight: 700;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
-  .endedHead::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--line2);
-    margin-left: 4px;
+  .endedToggle .endedCaret {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1;
+    transition: transform .18s ease;
   }
+  .endedToggle[aria-expanded="true"] .endedCaret { transform: rotate(180deg); }
+  .endedBody { margin-top: 12px; }
+  .endedBody[hidden] { display: none; }
 
   /* 오픈채팅 안내 */
   .join {
@@ -621,11 +646,6 @@
   <h2 class="vh">진행 중인 특가</h2>
   <ul class="grid" id="list" aria-busy="true" aria-live="polite"></ul>
 
-  <section class="endedWrap" id="endedWrap" hidden>
-    <h2 class="endedHead">마감된 딜 <span id="endedN"></span></h2>
-    <ul class="grid" id="endedList"></ul>
-  </section>
-
   <div class="join">
     <div>
       <strong>🔥 실시간 핫딜 알림방</strong>
@@ -633,11 +653,22 @@
     </div>
     <a href="https://open.kakao.com/o/gloEECzi" target="_blank" rel="noopener">입장하기</a>
   </div>
+  <p class="disclose joinDisclose">✔️링크를 통해 구매시 수수료를 제공받습니다.</p>
+
+  <section class="endedWrap" id="endedWrap" hidden>
+    <button class="endedToggle" id="endedToggle" type="button" aria-expanded="false" aria-controls="endedBody">
+      마감된 딜 <span class="endedCount" id="endedN">0개</span> 보기
+      <span class="endedCaret" aria-hidden="true">▾</span>
+    </button>
+    <div class="endedBody" id="endedBody" hidden>
+      <h2 class="vh">마감된 딜</h2>
+      <ul class="grid" id="endedList"></ul>
+    </div>
+  </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>✔️링크를 통해 구매시 수수료를 제공받습니다.</p>
     <p>가격과 재고, 혜택은 판매처에서 수시로 바뀔 수 있으니 결제 전에 판매처 페이지에서 꼭 다시 확인해 주세요.</p>
     <p class="copy">© Dealcent</p>
   </div>
@@ -670,6 +701,8 @@
     sub: document.getElementById("sub"),
     list: document.getElementById("list"),
     endedWrap: document.getElementById("endedWrap"),
+    endedToggle: document.getElementById("endedToggle"),
+    endedBody: document.getElementById("endedBody"),
     endedN: document.getElementById("endedN"),
     endedList: document.getElementById("endedList")
   };
@@ -753,7 +786,7 @@
       counts[k] = active.filter(function (d) { return d.store === k; }).length;
     });
 
-    if (state.store !== "all" && !counts[state.store]) state.store = "all";
+    if (state.store !== "all" && !STORE[state.store]) state.store = "all";
 
     els.liveN.textContent = String(active.length);
   }
@@ -861,7 +894,10 @@
       b.appendChild(dot);
     }
     b.appendChild(el("span", null, name));
-    b.appendChild(el("span", "n", String(count)));
+    var num = el("span", "n", String(count));
+    if (!count) num.hidden = true;
+    b.appendChild(num);
+    if (!count) b.classList.add("is-zero");
     b.addEventListener("click", function () {
       if (state.store === key) return;
       state.store = key;
@@ -875,8 +911,7 @@
     els.chips.innerHTML = "";
     els.chips.appendChild(chipNode("all", "전체", null, counts.all || 0));
     STORE_ORDER.forEach(function (k) {
-      if (!counts[k]) return;
-      els.chips.appendChild(chipNode(k, STORE[k].name, STORE[k].color, counts[k]));
+      els.chips.appendChild(chipNode(k, STORE[k].name, STORE[k].color, counts[k] || 0));
     });
   }
 
@@ -950,7 +985,6 @@
       els.endedList.innerHTML = "";
       els.endedWrap.hidden = true;
     }
-
     setSub(shownActive.length);
     renderSorts();
   }
@@ -993,6 +1027,12 @@
     els.q.focus();
     if (loaded) renderList();
   });
+  els.endedToggle.addEventListener("click", function () {
+    var open = els.endedToggle.getAttribute("aria-expanded") === "true";
+    els.endedToggle.setAttribute("aria-expanded", String(!open));
+    els.endedBody.hidden = open;
+  });
+
   els.sorts.addEventListener("click", function (e) {
     var btn = e.target.closest ? e.target.closest(".sort") : null;
     if (!btn) return;
